@@ -20,14 +20,28 @@ MACOS_NAME = "mac os"
 LINUX_NAME = "linux"
 WINDOWS_NAME = "windows"
 
-DEFAULT_RELEASE_BASE_URL = "https://github.com/indygreg/python-build-standalone/releases/download"
+DEFAULT_PY2_RELEASE_BASE_URL="https://www.python.org/ftp/python"
+DEFAULT_PY3_RELEASE_BASE_URL = "https://github.com/indygreg/python-build-standalone/releases/download"
+
+PY2_TOOL_VERSIONS = {
+    "2.7.18_src": {
+        "url": DEFAULT_PY2_RELEASE_BASE_URL + "2.7.18/Python-2.7.18.tgz",
+        "sha256": "da3080e3b488f648a3d7a4560ddee895284c3380b11d6de75edb986526b9a814",
+        "stripPrefix": "Python-2.7.18",
+    },
+    "2.7.18_win": {
+        "url": DEFAULT_PY2_RELEASE_BASE_URL + "2.7.18/python-2.7.18.amd64.msi",
+        "sha256": "b74a3afa1e0bf2a6fc566a7b70d15c9bfabba3756fb077797d16fffa27800c05",
+        "output": "python-2.7.18.amd64.msi",
+    },
+}
 
 # When updating the versions and releases, run the following command to get
 # the hashes:
 #   bazel run //python/private:print_toolchains_checksums
 #
 # buildifier: disable=unsorted-dict-items
-TOOL_VERSIONS = {
+PY3_TOOL_VERSIONS = {
     "3.8.10": {
         "url": "20210506/cpython-{python_version}-{platform}-pgo+lto-20210506T0943.tar.zst",
         "sha256": {
@@ -159,25 +173,25 @@ PLATFORMS = {
     ),
 }
 
-def get_release_url(platform, python_version, base_url = DEFAULT_RELEASE_BASE_URL, tool_versions = TOOL_VERSIONS):
+def get_release_url(platform, python_version, base_url = DEFAULT_PY3_RELEASE_BASE_URL, py3_tool_versions = PY3_TOOL_VERSIONS):
     """Resolve the release URL for the requested interpreter version
 
     Args:
         platform: The platform string for the interpreter
         python_version: The version of the intterpreter to get
-        base_url: The URL to prepend to the 'url' attr in the tool_versions dict
-        tool_versions: A dict listing the interpreter versions, their SHAs and URL
+        base_url: The URL to prepend to the 'url' attr in the py3_tool_versions dict
+        py3_tool_versions: A dict listing the interpreter versions, their SHAs and URL
 
     Returns:
         A tuple of (filename, url, and archive strip prefix)
     """
 
-    url = tool_versions[python_version]["url"]
+    url = py3_tool_versions[python_version]["url"]
 
     if type(url) == type({}):
         url = url[platform]
 
-    strip_prefix = tool_versions[python_version].get("strip_prefix", None)
+    strip_prefix = py3_tool_versions[python_version].get("strip_prefix", None)
     if type(strip_prefix) == type({}):
         strip_prefix = strip_prefix[platform]
 
@@ -207,7 +221,7 @@ EOF
         """.format(
             commands = "\n".join([
                 _commands_for_version(python_version)
-                for python_version in TOOL_VERSIONS.keys()
+                for python_version in PY3_TOOL_VERSIONS.keys()
             ]),
         ),
         executable = True,
@@ -221,7 +235,7 @@ def _commands_for_version(python_version):
             release_url = get_release_url(platform, python_version)[1],
             release_url_sha256 = get_release_url(platform, python_version)[1] + ".sha256",
         )
-        for platform in TOOL_VERSIONS[python_version]["sha256"].keys()
+        for platform in PY3_TOOL_VERSIONS[python_version]["sha256"].keys()
     ])
 
 def gen_python_config_settings(name = ""):

@@ -14,6 +14,12 @@
 
 workspace(name = "rules_python")
 
+load("//python:deps.bzl", "rules_python_deps")
+rules_python_deps()
+
+load("//python:extra_deps.bzl", "rules_python_extra_deps")
+rules_python_extra_deps()
+
 # Everything below this line is used only for developing rules_python. Users
 # should not copy it to their WORKSPACE.
 
@@ -31,7 +37,7 @@ load("//python:versions.bzl", "MINOR_MAPPING")
 python_register_toolchains(
     name = "python",
     # We always use the latest Python internally.
-    python_version = MINOR_MAPPING.values()[-1],
+    python3_version = MINOR_MAPPING.values()[-1],
 )
 
 load("//gazelle:deps.bzl", "gazelle_deps")

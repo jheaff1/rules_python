@@ -17,7 +17,7 @@ See https://docs.bazel.build/versions/main/skylark/testing.html#for-testing-star
 """
 
 load("@bazel_skylib//lib:unittest.bzl", "asserts", "unittest")
-load("//python:versions.bzl", "MINOR_MAPPING", "TOOL_VERSIONS")
+load("//python:versions.bzl", "MINOR_MAPPING", "PY3_TOOL_VERSIONS")
 
 required_platforms = [
     "x86_64-apple-darwin",
@@ -26,8 +26,8 @@ required_platforms = [
 
 def _smoke_test_impl(ctx):
     env = unittest.begin(ctx)
-    for version in TOOL_VERSIONS.keys():
-        platforms = TOOL_VERSIONS[version]["sha256"]
+    for version in PY3_TOOL_VERSIONS.keys():
+        platforms = PY3_TOOL_VERSIONS[version]["sha256"]
         for required_platform in required_platforms:
             asserts.true(
                 env,
@@ -38,8 +38,8 @@ def _smoke_test_impl(ctx):
         version = MINOR_MAPPING[minor]
         asserts.true(
             env,
-            version in TOOL_VERSIONS.keys(),
-            "Missing version {} in TOOL_VERSIONS".format(version),
+            version in PY3_TOOL_VERSIONS.keys(),
+            "Missing version {} in PY3_TOOL_VERSIONS".format(version),
         )
     return unittest.end(env)
 

@@ -68,6 +68,8 @@ python_register_toolchains(
     python_version = "3.9",
 )
 
+## todo - run rules_python_deps() and extra deps here
+
 load("@python3_9//:defs.bzl", "interpreter")
 
 load("@rules_python//python:pip.bzl", "pip_parse")
@@ -82,6 +84,11 @@ pip_parse(
 After registration, your Python targets will use the toolchain's interpreter during execution, but a system-installed interpreter
 is still used to 'bootstrap' Python targets (see https://github.com/bazelbuild/rules_python/issues/691).
 You may also find some quirks while using this toolchain. Please refer to [python-build-standalone documentation's _Quirks_ section](https://python-build-standalone.readthedocs.io/en/latest/quirks.html) for details.
+
+### Toolchain usage in other rules
+
+Python toolchains can be utilised in other bazel rules, such as `genrule()`, by adding the `toolchains=["@rules_python//python:current_py_toolchain"]` attribute. The path to the python interpreter can be obtained by using the `$(PYTHON2)` and `$(PYTHON3)` ["Make" Variables](https://bazel.build/reference/be/make-variables). See the [`test_current_py_toolchain`](tests/load_from_macro/BUILD) target for an example.
+
 
 ### "Hello World"
 

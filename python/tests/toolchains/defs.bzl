@@ -15,7 +15,7 @@
 """This module contains the definition for the toolchains testing rules.
 """
 
-load("//python:versions.bzl", "PLATFORMS", "TOOL_VERSIONS")
+load("//python:versions.bzl", "PLATFORMS", "PY3_TOOL_VERSIONS")
 
 _WINDOWS_RUNNER_TEMPLATE = """\
 @ECHO OFF
@@ -161,9 +161,9 @@ def acceptance_test(python_version, **kwargs):
 def acceptance_tests():
     """Creates a matrix of acceptance_test targets for all the toolchains.
     """
-    for python_version in TOOL_VERSIONS.keys():
+    for python_version in PY3_TOOL_VERSIONS.keys():
         for platform, meta in PLATFORMS.items():
-            if platform not in TOOL_VERSIONS[python_version]["sha256"]:
+            if platform not in PY3_TOOL_VERSIONS[python_version]["sha256"]:
                 continue
             acceptance_test(
                 name = "python_{python_version}_{platform}_test".format(

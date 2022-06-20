@@ -1,0 +1,13 @@
+
+change the python_register_toolchains workspace macro to have an arg to include python2, disabled by default
+change repositories:python_repository (workspace rule which brings in standalone build) to python3_repository. Make a python2 repository, which fetches for windows and builds for linux
+    - actually python_repository should have two top level folders - python2 and python3. This repo will have a BUILD file that defines the py_runtime_pair
+    - actually do have python3_reposotiry. change toolchains_repo to define the py_runtime_pair, based on python2 and python3 repos
+change toolchains_repo.bzl so the repo of aliases has python2 stuff as well
+
+
+
+change gitconfig
+update README
+add some automated tests = see acceptance_test in defs.bzl
+see if i can build python2 without tests as they take ages to run. see https://stackoverflow.com/a/54144598
